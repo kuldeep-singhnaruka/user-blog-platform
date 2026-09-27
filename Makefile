@@ -1,17 +1,15 @@
 .PHONY: install test dev-api dev-web
 
-VENV=.venv
-
 install:
-	python3 -m venv $(VENV)
-	$(VENV)/bin/pip install -r backend/requirements.txt
+	python3 -m venv .venv
+	.venv/bin/pip install -r backend/requirements.txt
 	cd frontend && npm install
 
 test:
-	cd backend && ../$(VENV)/bin/pytest
+	cd backend && ../.venv/bin/pytest
 
 dev-api:
-	cd backend && ../$(VENV)/bin/uvicorn app.main:app --reload --port 8000
+	cd backend && ../.venv/bin/uvicorn app.main:app --reload --port 8000
 
 dev-web:
 	cd frontend && npm run dev

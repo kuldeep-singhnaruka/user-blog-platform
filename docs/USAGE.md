@@ -1,81 +1,93 @@
-# Usage guide
+# Usage
+This guide covers the main user flows in Fieldnotes.
 
-## Run it locally
+## Start the Application
 
-1. Create a virtualenv and install `backend/requirements.txt` (see the root README).
-2. Start the API from the `backend` directory on port 8000.
-3. Start the frontend with `npm run dev` from `frontend`.
-4. Open http://localhost:5173.
+### 1. Start the API
+Open a terminal and start the backend from the `backend` folder on port `8000`.
 
-The first API start creates tables and the demo reading room.
+### 2. Start the Website
+Open a second terminal and start the frontend from the `frontend` folder.
 
-## Read without an account
+### 3. Open the Website
+Open:
 
-Open the home page. Search, filter by tag, or filter by an author's blog slug. Open a note. Drafts are absent. Likes and comments ask you to sign in.
-
-## Write as yourself
-
-Register, or sign in as `mina@fieldnotes.local` / `Author123!`.
-
-- **My desk** lists drafts and published notes.
-- **Write** creates a note. Save draft keeps it off the public feed. Publish puts it in the reading room.
-- A cover must be an image of 2 MB or less.
-- Reference topic optionally asks Wikipedia for a short public summary. If that call fails, the note still saves.
-- The blog description on My desk is your tenant profile. The slug stays fixed so existing links keep working.
-
-Sign in as `ravi@fieldnotes.local` / `Reader123!` in a private window if you want a second person liking and commenting. You cannot edit Mina's notes with Ravi's account.
-
-## Export
-
-On My desk, export CSV, Excel, or PDF. The file contains only your posts.
-
-## Admin
-
-Sign in as `admin@fieldnotes.local` / `Admin123!`. The Admin link shows:
-
-- the role to permission map
-- accounts
-- the audit log (register, login, publish, like, export, and so on)
-- the SQL plan for the published feed
-
-## Reset local data
-
-Stop the API and delete `backend/data/blog.db`. The next start seeds the demo again. Uploaded images live in `backend/uploads/`.
-
-## Configuration
-
-Copy `.env.example` to `.env` at the project root.
-
-| Variable | Why it exists |
-| --- | --- |
-| `JWT_SECRET` | Signs access tokens. Use a long random value if anyone else can reach the process. |
-| `DATABASE_URL` | Default SQLite. Docker Compose sets PostgreSQL. |
-| `WEBHOOK_SECRET` | Shared secret for inbound webhooks. |
-| `EXTERNAL_API_BASE` / `EXTERNAL_API_KEY` | Optional second summary provider. Leave blank to use Wikipedia only. |
-| `SEED_DEMO_DATA` | Set `false` to start with an empty database (permissions are still loaded). |
-
-## Backup
-
-SQLite:
-
-```bash
-cd backend
-../.venv/bin/python scripts/backup_db.py
+```text
+http://localhost:5173
 ```
 
-PostgreSQL:
+---
 
-```bash
-pg_dump "postgresql://blog:blog@localhost:5432/blog" --format=custom --file=backups/blog.dump
+# Read Posts
+
+You can read published posts without signing in.
+
+1. Stay signed out.
+2. Open the home page.
+3. Select a published post.
+4. Read the full post.
+
+Mina's draft is not displayed on the public home page.
+
+---
+
+# Write a Post
+
+Sign in using the author account:
+
+```text
+Email:    mina@fieldnotes.local
+Password: Author123!
 ```
 
-## Send a webhook
+### My Desk
+Open **My Desk** to see Mina's posts.
+The list includes the draft:
 
-```bash
-curl -X POST http://localhost:8000/api/v1/webhooks/events \
-  -H "Content-Type: application/json" \
-  -H "X-Webhook-Token: dev-webhook-secret" \
-  -d '{"source":"demo","event_type":"ping","data":{"ok":true}}'
+```text
+Notes from the desk
 ```
 
-Use the secret from your environment if you changed it.
+Open the draft and select **Publish**.
+Once published, the post becomes visible on the public home page.
+
+### Post Actions
+
+| Action         | Result                          |
+| -------------- | ------------------------------- |
+| **Write**      | Starts a new post               |
+| **Save Draft** | Keeps the post private          |
+| **Publish**    | Makes the post publicly visible |
+| **Delete**     | Removes the post                |
+
+---
+
+# Like and Comment
+Sign out from the author account and sign in as the reader:
+
+```text
+Email:    ravi@fieldnotes.local
+Password: Reader123!
+```
+
+1. Open one of Mina's published posts.
+2. Click **Like**.
+3. Add a comment.
+4. Confirm that the post does not show an **Edit** button.
+
+Ravi can interact with Mina's published post, but cannot edit or manage it.
+
+---
+
+# Reset the Application
+To reset the local database and recreate the demo data:
+
+1. Stop the API server.
+2. Delete the database file:
+
+```text
+backend/data/blog.db
+```
+
+3. Start the API again.
+The application will create the database and demo posts again on startup.

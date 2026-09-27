@@ -1,20 +1,6 @@
-"""Import every model so SQLAlchemy metadata is complete before create_all."""
+"""Import every model so table creation sees the full schema."""
 
-from app.models.access import RolePermission
-from app.models.audit import AuditLog
-from app.models.content import Comment, Like, Post, Tag, post_tags
+from app.models.content import Comment, Like, Post
 from app.models.user import Blog, User
-from app.models.webhook import WebhookEvent
 
-__all__ = [
-    "AuditLog",
-    "Blog",
-    "Comment",
-    "Like",
-    "Post",
-    "RolePermission",
-    "Tag",
-    "User",
-    "WebhookEvent",
-    "post_tags",
-]
+__all__ = ["Blog", "Comment", "Like", "Post", "User"]

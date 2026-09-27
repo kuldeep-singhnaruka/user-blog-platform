@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.deps import get_optional_user, require_permission
+from app.core.deps import get_current_user, get_optional_user
+from app.core.errors import AppError
 from app.models import User
 from app.schemas import CommentIn, CommentOut, LikeOut
 from app.services.engagement_service import EngagementService
@@ -25,7 +26,7 @@ def list_comments(
 def add_comment(
     post_id: int,
     payload: CommentIn,
-    user: User = Depends(require_permission("comment:create")),
+    user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> CommentOut:
     return EngagementService(db).add_comment(user, post_id, payload.body)
@@ -34,11 +35,9 @@ def add_comment(
 @router.delete("/comments/{comment_id}", status_code=204)
 def delete_comment(
     comment_id: int,
-    user: User = Depends(get_optional_user),
+    user: User | None = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> Response:
-    from app.core.errors import AppError
-
     if user is None:
         raise AppError(401, "unauthorized", "Login required")
     EngagementService(db).delete_comment(user, comment_id)
@@ -48,7 +47,7 @@ def delete_comment(
 @router.post("/posts/{post_id}/likes", response_model=LikeOut)
 def toggle_like(
     post_id: int,
-    user: User = Depends(require_permission("like:toggle")),
+    user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> LikeOut:
     return EngagementService(db).toggle_like(user, post_id)

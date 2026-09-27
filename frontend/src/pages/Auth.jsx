@@ -70,7 +70,6 @@ export default function AuthPages({ mode }) {
           <ul>
             <li>mina@fieldnotes.local / Author123!</li>
             <li>ravi@fieldnotes.local / Reader123!</li>
-            <li>admin@fieldnotes.local / Admin123!</li>
           </ul>
         </aside>
       )}

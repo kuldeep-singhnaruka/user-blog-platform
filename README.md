@@ -1,102 +1,182 @@
 # Fieldnotes
 
-A user-specific blog platform for the Week 1 production-engineering bootcamp.
+A small blog application built for the Week 1 Bootcamp.
 
-Anyone can browse and read published notes. Signed-in users get their own blog (a tenant), can draft and publish posts, and can like or comment on other people's published work. Owners manage only their own posts. Moderators and admins have a shorter, explicit permission list.
+Fieldnotes allows users to read, create, manage, like, and comment on blog posts based on their account permissions.
 
-The app runs on your machine. A public domain is not required.
+## Features
 
-## Quick start
+* Read published blog posts without signing in
+* Sign in to create and manage your own posts
+* Save posts as drafts
+* Publish your posts
+* Like published posts
+* Comment on published posts
+* User-based access control
+* Separate frontend and backend applications
 
-From the project root:
+## Tech Stack
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
-cd backend
-uvicorn app.main:app --reload --port 8000
+### Frontend
+
+* JavaScript
+* Node.js
+* npm
+
+### Backend
+
+* Python
+* FastAPI
+* Uvicorn
+
+### Architecture
+
+The application follows a simple layered architecture:
+
+```text
+Browser
+   │
+   ▼
+Frontend
+   │
+   ▼
+Python API
+   │
+   ├── API Routes
+   ├── Services
+   ├── Repositories
+   └── Models
+        │
+        ▼
+     Database
 ```
 
-In a second terminal:
+## Project Structure
+
+```text
+fieldnotes/
+│
+├── frontend/
+│   └── Website and frontend application
+│
+├── backend/
+│   └── Python API
+│       └── app/
+│           ├── api/
+│           │   └── routes/
+│           ├── services/
+│           ├── models/
+│           └── repositories/
+│
+├── docs/
+│   └── Additional project documentation
+│
+└── README.md
+```
+
+### Backend Layers
+
+| Directory       | Responsibility                          |
+| --------------- | --------------------------------------- |
+| `api/routes/`   | Handles HTTP requests and responses     |
+| `services/`     | Contains application and business logic |
+| `models/`       | Defines database models                 |
+| `repositories/` | Handles database queries                |
+
+## Run Locally
+
+### 1. Start the Backend
+
+Open a terminal and run:
+
+```bash
+cd backend
+../.venv/bin/uvicorn app.main:app --reload --port 8000
+```
+
+The backend will be available at:
+
+```text
+http://localhost:8000
+```
+
+### 2. Start the Frontend
+
+Open a second terminal:
 
 ```bash
 cd frontend
-npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+The frontend will be available at:
 
-API docs (Swagger): [http://localhost:8000/docs](http://localhost:8000/docs)
-
-Health check: [http://localhost:8000/health](http://localhost:8000/health)
-
-No `.env` file is required for this local path. Defaults use SQLite at `backend/data/blog.db`. Copy `.env.example` to `.env` when you want to change the JWT secret or database.
-
-## Demo accounts
-
-Created on first launch when `SEED_DEMO_DATA` is true (the default):
-
-| Email | Password | What they can do |
-| --- | --- | --- |
-| `mina@fieldnotes.local` | `Author123!` | Author. Has published notes and one draft. |
-| `ravi@fieldnotes.local` | `Reader123!` | Reader. Can like and comment. |
-| `admin@fieldnotes.local` | `Admin123!` | Admin. Audit log, users, permissions, query plan. |
-
-## Tests
-
-```bash
-cd backend
-../.venv/bin/pytest
+```text
+http://localhost:5173
 ```
 
-## Docker (optional)
+Open the application in your browser:
 
-Requires Docker. This path uses PostgreSQL instead of SQLite.
+**http://localhost:5173**
 
-```bash
-docker compose up --build
+## Demo Accounts
+
+The first application launch creates two demo accounts.
+
+| Email                   | Password     | Role   |
+| ----------------------- | ------------ | ------ |
+| `mina@fieldnotes.local` | `Author123!` | Author |
+| `ravi@fieldnotes.local` | `Reader123!` | Reader |
+
+### Author Account
+
+The author account has:
+
+* Published posts
+* One draft post
+* Permission to create posts
+* Permission to manage its own posts
+
+### Reader Account
+
+The reader account can:
+
+* Read published posts
+* Like posts
+* Comment on posts
+
+## How It Works
+
+The browser communicates with the Python API.
+
+```
+User
+ │
+ ▼
+Frontend
+ │
+ │ HTTP requests
+ ▼
+API Routes
+ │
+ ▼
+Services
+ │
+ ▼
+Repositories
+ │
+ ▼
+Database
 ```
 
-The site is at [http://localhost:5173](http://localhost:5173) and the API at [http://localhost:8000](http://localhost:8000).
+Each layer has a specific responsibility, which keeps the application organized and easier to maintain.
 
 ## Documentation
 
-- [Architecture](docs/ARCHITECTURE.md)
-- [API contracts](docs/API.md)
-- [Usage guide](docs/USAGE.md)
-- [2-minute demo script](docs/DEMO.md)
-
-## What the layout is teaching
-
-| Idea | Where it lives |
-| --- | --- |
-| Client / server and HTTP | React app on port 5173, FastAPI on port 8000 |
-| MVC-style split | `api/routes` (controllers), `services`, `models`, `repositories` |
-| REST | `/api/v1`, resources, status codes, pagination, filter, sort |
-| Auth vs authorization | JWT identifies the user. Roles and permissions decide the action. |
-| Multi-tenant ownership | Each user owns one blog. Post writes use that blog, never a client-supplied tenant id. |
-| Uploads | `POST /api/v1/uploads/cover` checks type and size, stores a random filename |
-| Export | CSV, Excel, and PDF of the caller's own posts |
-| Performance | Composite index, list payload without the body, grouped like/comment counts, short list cache, gzip, rate limit |
-| RBAC | `user`, `moderator`, `admin` in `app/core/permissions.py` and the `role_permissions` table |
-| Third-party HTTP | Wikipedia summary lookup with timeout and retries. Optional API key provider via env. |
-| Webhooks | `POST /api/v1/webhooks/events` with a shared secret |
-| OAuth2 token route | `POST /api/v1/auth/token` (password grant for this first-party app; see the docs for why third parties should use authorization code + PKCE) |
-| Containers and CI | `docker-compose.yml`, health check, `.github/workflows/ci.yml` |
-| Backups | `python backend/scripts/backup_db.py` for SQLite. PostgreSQL: `pg_dump`. |
-| Audit | `audit_logs` table, visible to admins |
-
-## Project map
+Additional documentation is available in:
 
 ```text
-backend/app/
-  api/routes/        HTTP controllers
-  services/          business rules
-  repositories/      database queries
-  models/            tables
-  core/              config, security, permissions, rate limit
-frontend/src/        reading room, editor, desk, admin
-docs/                architecture, API, usage, demo script
+docs/
 ```
+
+Refer to the documentation for more detailed information about the application and its implementation.

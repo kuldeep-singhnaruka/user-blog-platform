@@ -1,25 +1,62 @@
-# Two-minute demo script
+# Demo Script
 
-Record the screen at http://localhost:5173 with both servers already running. Speak slowly. Cut the pauses.
+Use this script to demonstrate the main Fieldnotes features.
 
-| Time | Do this | Say this |
-| --- | --- | --- |
-| 0:00 | Home page, no one signed in. Scroll the three published notes. | Anyone can read published notes. No account required. |
-| 0:20 | Open "A boundary is a feature". Point at the like count and the comment box. | The full essay loads on this page. The feed itself does not send every body. |
-| 0:35 | Sign in as `ravi@fieldnotes.local` / `Reader123!`. Like the post and add a comment. | A signed-in reader can respond. Ravi still cannot edit Mina's note. |
-| 0:55 | Sign out. Sign in as `mina@fieldnotes.local` / `Author123!`. Open My desk. | Mina's desk is her tenant. The draft "Notes from the desk" is not on the public feed. |
-| 1:15 | Open the draft, click Publish, then show it on the home page. | Publishing is the line between the private desk and the reading room. |
-| 1:30 | Back on My desk, click Export CSV. | She can download only her own posts, as CSV, Excel, or PDF. |
-| 1:45 | Sign out. Sign in as `admin@fieldnotes.local` / `Admin123!`. Open Admin. | Admin sees the role map, the audit trail, and the query plan for the feed index. |
-| 2:00 | Stop on the audit table. | That is the week-one platform: public reading, private writing, and explicit permissions. |
+## Before the Demo
 
-## If a click fails
+Make sure both the frontend and backend servers are running.
 
-Refresh once. If the page cannot reach the API, check that `uvicorn` is still running on port 8000 and `npm run dev` is on port 5173.
+Open:
 
-## Hindi cue card
+```text
+http://localhost:5173
+```
 
-- Bina login ke home dikhao: published blogs sab padh sakte hain.
-- Ravi se login karke like aur comment karo.
-- Mina se login karke draft dikhao, publish karo, CSV export karo.
-- Admin se audit log aur query plan dikhao.
+## Demo Flow
+
+| Time     | Action                                                                                                    |
+| -------- | --------------------------------------------------------------------------------------------------------- |
+| **0:00** | Open the home page while signed out. Open any published post.                                             |
+| **0:30** | Sign in as `ravi@fieldnotes.local` / `Reader123!`. Like the post and add a comment.                       |
+| **1:00** | Sign out and sign in as `mina@fieldnotes.local` / `Author123!`. Open **My Desk** and show the draft post. |
+| **1:20** | Publish the draft and return to the home page. Show that the post is now publicly visible.                |
+
+## Key Points to Explain
+
+During the demo, explain the following:
+
+* A published post can be read without logging in.
+* After logging in, an author can create and manage their own posts.
+* Another logged-in user can like and comment on a published post.
+* Users cannot edit or manage another user's posts.
+* Draft posts remain private until the author publishes them.
+
+## Demo Accounts
+
+### Reader
+
+```text
+Email:    ravi@fieldnotes.local
+Password: Reader123!
+```
+
+The reader can:
+
+* Read published posts
+* Like posts
+* Add comments
+
+### Author
+
+```text
+Email:    mina@fieldnotes.local
+Password: Author123!
+```
+
+The author can:
+
+* Create posts
+* Manage their own posts
+* Publish and unpublish posts
+* Delete their own posts
+
